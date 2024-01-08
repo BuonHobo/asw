@@ -1,5 +1,6 @@
 package asw.ordermanager.orderservice.rest;
 
+import asw.ordermanager.orderservice.api.common.OrderItemElement;
 import asw.ordermanager.orderservice.domain.*;
 
 import asw.ordermanager.orderservice.api.rest.*;

@@ -1,4 +1,4 @@
-package asw.ordermanager.orderservice.api.rest;
+package asw.ordermanager.orderservice.api.common;
 
 import lombok.*;
 

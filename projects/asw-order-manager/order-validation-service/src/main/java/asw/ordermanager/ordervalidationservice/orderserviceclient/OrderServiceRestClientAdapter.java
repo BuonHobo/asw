@@ -1,6 +1,7 @@
 package asw.ordermanager.ordervalidationservice.orderserviceclient;
 
-import asw.ordermanager.ordervalidationservice.domain.*; 
+import asw.ordermanager.orderservice.api.common.OrderItemElement;
+import asw.ordermanager.ordervalidationservice.domain.*;
 
 import asw.ordermanager.orderservice.api.rest.*;
 
