@@ -1,0 +1,102 @@
+version: "3"
+volumes:
+  kafka-data:
+    driver: local
+  order-service-db-data:
+    driver: local
+  product-service-db-data:
+    driver: local
+  order-validation-service-db-data:
+    driver: local
+  consul-data:
+    driver: local
+services:
+  order-service:
+    image: localhost/order-service
+    build:
+      context: .
+      args:
+        JAR: order-service
+    depends_on: ["consul","kafka","order-service-db"]
+    deploy:
+      replicas: 2
+  product-service:
+    image: localhost/product-service
+    build:
+      context: .
+      args:
+        JAR: product-service
+    depends_on: ["consul","kafka","product-service-db"]
+    deploy:
+      replicas: 2
+  order-validation-service:
+    image: localhost/order-validation-service
+    build:
+      context: .
+      args:
+        JAR: order-validation-service
+    depends_on: ["consul","kafka","order-validation-service-db"]
+    deploy:
+      replicas: 2
+  api-gateway:
+    image: localhost/api-gateway
+    build:
+      context: .
+      args:
+        JAR: api-gateway
+    depends_on: ["consul","kafka"]
+    ports:
+      - "8080:8080"
+  kafka:
+    image: docker.io/bitnami/kafka:3.6
+    ports:
+      - "9092:9092"
+    volumes:
+      - "kafka-data:/bitnami"
+    environment:
+      # KRaft settings
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      # Listeners
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+  init-kafka:
+    image: bitnami/kafka
+    working_dir: /opt/bitnami/kafka/bin
+    entrypoint: /bin/bash
+    depends_on: ["kafka"]
+    command: kafka-topics.sh --create --if-not-exists --topic products --replication-factor=1 --partitions=2 --bootstrap-server kafka:9092 && kafka-topics.sh --create --if-not-exists --topic orders --replication-factor=1 --partitions=2 --bootstrap-server kafka:9092
+  consul:
+    image: hashicorp/consul
+    ports:
+      - "8500:8500"
+    volumes:
+      - "consul-data:/consul/data"
+  order-service-db:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=ordermanager
+    ports:
+      - "8081:5432"
+    volumes:
+      - "order-service-db-data:/var/lib/postgresql/data"
+  product-service-db:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=ordermanager
+    ports:
+      - "8082:5432"
+    volumes:
+      - "product-service-db-data:/var/lib/postgresql/data"
+  order-validation-service-db:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=ordermanager
+    ports:
+      - "8083:5432"
+    volumes:
+      - "order-validation-service-db-data:/var/lib/postgresql/data"
