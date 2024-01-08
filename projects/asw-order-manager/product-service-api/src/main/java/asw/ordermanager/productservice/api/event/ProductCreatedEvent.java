@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProductCreatedEvent implements ProductEvent{
     private String name;
-    private String category;
     private int stockLevel;
     private double price;
 }

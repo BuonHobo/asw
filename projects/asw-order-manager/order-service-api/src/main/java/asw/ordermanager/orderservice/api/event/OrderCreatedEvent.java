@@ -9,9 +9,8 @@ import java.util.List;
 
 @Data @NoArgsConstructor @AllArgsConstructor
 public class OrderCreatedEvent implements OrderEvent{
+    private Long id;
     private String customer;
-    private String address;
     private List<OrderItemElement> orderItems;
     private double total;
-
 }

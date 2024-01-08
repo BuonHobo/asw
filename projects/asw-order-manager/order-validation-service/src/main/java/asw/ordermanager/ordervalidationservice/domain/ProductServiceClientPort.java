@@ -8,6 +8,6 @@ public interface ProductServiceClientPort {
 
 //	public List<Product> getProducts(); 
 
-	public List<Product> getProductsByNames(List<String> names); 
+	public List<Product> getProductsByNames(List<String> names);
 
 }

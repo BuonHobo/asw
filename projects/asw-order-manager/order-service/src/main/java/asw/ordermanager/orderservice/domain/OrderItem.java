@@ -1,6 +1,7 @@
 package asw.ordermanager.orderservice.domain;
 
-import jakarta.persistence.*; 
+import asw.ordermanager.orderservice.api.common.OrderItemElement;
+import jakarta.persistence.*;
 
 import lombok.*; 
 
@@ -11,6 +12,9 @@ import lombok.*;
 public class OrderItem {
 
 	private String product; 
-	private int quantity; 
-	
+	private int quantity;
+
+    public OrderItemElement toOrderItemElement() {
+        return new OrderItemElement(this.getProduct(),this.getQuantity());
+    }
 }

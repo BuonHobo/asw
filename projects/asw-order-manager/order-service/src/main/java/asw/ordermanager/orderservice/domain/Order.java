@@ -1,8 +1,9 @@
 package asw.ordermanager.orderservice.domain;
 
-import jakarta.persistence.*; 
+import asw.ordermanager.orderservice.api.event.OrderCreatedEvent;
+import jakarta.persistence.*;
 
-import java.util.*; 
+import java.util.*;
 
 import lombok.*; 
 
@@ -36,5 +37,8 @@ public class Order implements Comparable<Order> {
 	public int compareTo(Order other) {
 		return this.id.compareTo(other.id); 
 	}
-	
+
+	public OrderCreatedEvent toOrderCreatedEvent(){
+		return new OrderCreatedEvent(this.getId(),this.getCustomer(),this.getOrderItems().stream().map(OrderItem::toOrderItemElement).toList(),this.getTotal());
+	}
 }

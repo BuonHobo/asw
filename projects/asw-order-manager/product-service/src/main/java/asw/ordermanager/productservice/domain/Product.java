@@ -1,6 +1,8 @@
 package asw.ordermanager.productservice.domain;
 
-import jakarta.persistence.*; 
+import asw.ordermanager.productservice.api.event.ProductCreatedEvent;
+import asw.ordermanager.productservice.api.event.ProductStockLevelUpdatedEvent;
+import jakarta.persistence.*;
 
 import lombok.*; 
 
@@ -30,6 +32,14 @@ public class Product implements Comparable<Product> {
 	@Override
 	public int compareTo(Product other) {
 		return this.name.compareTo(other.name); 
+	}
+
+	public ProductCreatedEvent toProductCreatedEvent(){
+		return new ProductCreatedEvent(this.getName(),this.getStockLevel(),this.getPrice());
+	}
+
+	public ProductStockLevelUpdatedEvent toProductStockLevelUpdatedEvent(int stockLevelVariation){
+		return new ProductStockLevelUpdatedEvent(this.getName(),stockLevelVariation);
 	}
 	
 }

@@ -11,11 +11,11 @@ echo
 # non deve dare errore, ma non deve passare la validazione 
 
 echo "# convalida l'ordine 7" 
-echo $(curl -s localhost:8080/ordervalidationservice/ordervalidations/7) | json_pp
+echo $(curl -s localhost:8080/ordervalidationservice/ordervalidations/7)
 echo 
 
 # non deve dare errore, ma non deve passare la validazione (l'ordine non esiste) 
 
 echo "# convalida l'ordine 99" 
-echo $(curl -s localhost:8080/ordervalidationservice/ordervalidations/99) | json_pp
+echo $(curl -s localhost:8080/ordervalidationservice/ordervalidations/99)
 echo 

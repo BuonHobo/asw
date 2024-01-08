@@ -1,7 +1,6 @@
 package asw.ordermanager.orderservice.domain;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*; 
@@ -12,9 +11,13 @@ public class OrderService {
 	@Autowired
 	private OrderRepository orderRepository;
 
+	@Autowired
+	private OrderEventPublisher orderEventPublisher;
+
  	public Order createOrder(String customer, String address, List<OrderItem> orderItems, double total) {
 		Order order = new Order(customer, address, orderItems, total); 
 		order = orderRepository.save(order);
+		orderEventPublisher.publish(order.toOrderCreatedEvent());
 		return order;
 	}
 
