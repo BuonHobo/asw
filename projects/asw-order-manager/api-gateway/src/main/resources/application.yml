@@ -1,6 +1,6 @@
 # application.yml 
 --- 
-spring: 
+spring:
   application: 
     name: apigateway
   cloud:
@@ -45,7 +45,8 @@ spring:
         - Path=/ordervalidationservice/**
         filters:
         - StripPrefix=1
-    
+
+
 server: 
 #  port: ${PORT:${SERVER_PORT:0}}
   port: 8080

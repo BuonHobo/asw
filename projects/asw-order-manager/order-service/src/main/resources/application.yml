@@ -1,6 +1,6 @@
 # application.yml
 --- 
-spring: 
+spring:
   application: 
     name: orderservice
   # CONSUL 
@@ -19,6 +19,17 @@ spring:
         queryPassing: true 
     loadbalancer: 
       ribbon.enabled: false 
+
+  datasource:
+    url: jdbc:postgresql://order-service-db:5432/postgres
+    username: postgres
+    password: ordermanager
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 server: 
   port: ${PORT:${SERVER_PORT:0}}
