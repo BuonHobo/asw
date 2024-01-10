@@ -1,5 +1,7 @@
 package asw.ordermanager.orderservice.domain;
 
+import asw.ordermanager.orderservice.api.common.OrderItemElement;
+import asw.ordermanager.orderservice.api.event.OrderCreatedEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,13 +16,11 @@ public class OrderService {
 	@Autowired
 	private OrderEventPublisher orderEventPublisher;
 
-	@Autowired
-	private OrderEventBuilder orderEventBuilder;
 
  	public Order createOrder(String customer, String address, List<OrderItem> orderItems, double total) {
 		Order order = new Order(customer, address, orderItems, total); 
 		order = orderRepository.save(order);
-		orderEventPublisher.publish(orderEventBuilder.toOrderCreatedEvent(order));
+		orderEventPublisher.publish(toOrderCreatedEvent(order));
 		return order;
 	}
 
@@ -43,5 +43,19 @@ public class OrderService {
 		Collection<Order> orders = orderRepository.findByOrderItems_Product(product);
 		return orders;
 	}
-	
+
+	private OrderCreatedEvent toOrderCreatedEvent(Order order) {
+		return new OrderCreatedEvent(
+				order.getId(),
+				order.getCustomer(),
+				order.getOrderItems()
+						.stream()
+						.map(item -> new OrderItemElement(
+										item.getProduct(),
+										item.getQuantity()
+								)
+						)
+						.toList(),
+				order.getTotal());
+	}
 }
