@@ -14,10 +14,13 @@ public class OrderService {
 	@Autowired
 	private OrderEventPublisher orderEventPublisher;
 
+	@Autowired
+	private OrderEventBuilder orderEventBuilder;
+
  	public Order createOrder(String customer, String address, List<OrderItem> orderItems, double total) {
 		Order order = new Order(customer, address, orderItems, total); 
 		order = orderRepository.save(order);
-		orderEventPublisher.publish(order.toOrderCreatedEvent());
+		orderEventPublisher.publish(orderEventBuilder.toOrderCreatedEvent(order));
 		return order;
 	}
 

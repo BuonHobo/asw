@@ -1,5 +1,7 @@
 package asw.ordermanager.productservice.domain;
 
+import asw.ordermanager.productservice.api.event.ProductCreatedEvent;
+import asw.ordermanager.productservice.api.event.ProductStockLevelUpdatedEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,7 +19,7 @@ public class ProductService {
  	public Product createProduct(String name, String category, int stockLevel, double price) {
 		Product product = new Product(name, category, stockLevel, price); 
 		product = productRepository.save(product);
-		productEventPublisher.publish(product.toProductCreatedEvent());
+		productEventPublisher.publish(new ProductCreatedEvent(product.getName(),product.getStockLevel(),product.getPrice()));
 		return product;
 	}
 
@@ -45,7 +47,7 @@ public class ProductService {
 		Product product = getProduct(name); 
 		product.setStockLevel(product.getStockLevel() + stockLevelVariation);
 		product = productRepository.save(product);
-		productEventPublisher.publish(product.toProductStockLevelUpdatedEvent(stockLevelVariation));
+		productEventPublisher.publish(new ProductStockLevelUpdatedEvent(product.getName(),stockLevelVariation));
 		return product;
 	}
 
