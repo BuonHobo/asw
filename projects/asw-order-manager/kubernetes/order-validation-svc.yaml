@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ordervalidationservice
+spec:
+  selector:
+    app: ordervalidationservice
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ordervalidationservice
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ordermanager
+      service: ordervalidationservice
+  template:
+    metadata:
+      labels:
+        app: ordermanager
+        service: ordervalidationservice
+    spec:
+      containers:
+        - name: order-container
+          image: ghcr.io/buonhobo/asw-order-validation-service
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 3
+            initialDelaySeconds: 120
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 10
+          ports:
+            - containerPort: 8080
