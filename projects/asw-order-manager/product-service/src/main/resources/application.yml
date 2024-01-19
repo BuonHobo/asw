@@ -36,9 +36,9 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     bootstrap-servers: kafka:9092
 
-server: 
-  port: ${PORT:${SERVER_PORT:0}}
-#  port: 8080
+server:
+  # port: ${PORT:${SERVER_PORT:0}}
+  port: 8080
 #  port: 8082 
   # per swagger dietro un api gateway 
   forward-headers-strategy: framework
