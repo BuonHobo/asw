@@ -1,0 +1,227 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orderservice
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ordermanager
+      service: orderservice
+  template:
+    metadata:
+      labels:
+        app: ordermanager
+        service: orderservice
+    spec:
+      containers:
+        - name: orderservice-container
+          image: ghcr.io/buonhobo/asw-order-service
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: orderservice
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 3
+            initialDelaySeconds: 120
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 10
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ordervalidationservice
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ordermanager
+      service: ordervalidationservice
+  template:
+    metadata:
+      labels:
+        app: ordermanager
+        service: ordervalidationservice
+    spec:
+      containers:
+        - name: ordervalidationservice-container
+          image: ghcr.io/buonhobo/asw-order-validation-service
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: ordervalidationservice,rest
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 3
+            initialDelaySeconds: 120
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 10
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: productservice
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ordermanager
+      service: productservice
+  template:
+    metadata:
+      labels:
+        app: ordermanager
+        service: productservice
+    spec:
+      containers:
+        - name: productservice-container
+          image: ghcr.io/buonhobo/asw-product-service
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: productservice
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 3
+            initialDelaySeconds: 120
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 10
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apigateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ordermanager
+      service: apigateway
+  template:
+    metadata:
+      labels:
+        app: ordermanager
+        service: apigateway
+    spec:
+      containers:
+        - name: apigateway-container
+          image: ghcr.io/buonhobo/asw-api-gateway
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 3
+            initialDelaySeconds: 180
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 10
+#        startupProbe: 
+#          httpGet: 
+#            path: /actuator/health
+#            port: 8080
+#          periodSeconds: 10
+#          failureThreshold: 30 
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orderservice
+spec:
+  selector:
+    app: ordermanager
+    service: orderservice
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ordervalidationservice
+spec:
+  selector:
+    app: ordermanager
+    service: ordervalidationservice
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: productservice
+spec:
+  selector:
+    app: ordermanager
+    service: productservice
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apigateway
+spec:
+  selector:
+    app: ordermanager
+    service: apigateway
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+#    nodePort: 32082
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ordermanager
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: ordermanager.asw.it
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: apigateway
+                port:
+                  number: 8080 
