@@ -21,7 +21,7 @@ spring:
       ribbon.enabled: false
 
   datasource:
-    url: jdbc:postgresql://product-service-db:5432/postgres
+    url: jdbc:postgresql://product-service-db-postgresql:5432/postgres
     username: postgres
     password: ordermanager
   jpa:
@@ -34,7 +34,7 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: kafka.default.svc.cluster.local:9092
 
 server:
   # port: ${PORT:${SERVER_PORT:0}}

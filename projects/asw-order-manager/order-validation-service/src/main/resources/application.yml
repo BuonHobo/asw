@@ -21,7 +21,7 @@ spring:
       ribbon.enabled: false
 
   datasource:
-    url: jdbc:postgresql://order-validation-service-db:5432/postgres
+    url: jdbc:postgresql://order-validation-service-db-postgresql:5432/postgres
     username: postgres
     password: ordermanager
   jpa:
@@ -31,7 +31,8 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers:  kafka-controller-0.kafka-controller-headless.default.svc.cluster.local:9092,kafka-controller-1.kafka-controller-headless.default.svc.cluster.local:9092,kafka-controller-2.kafka-controller-headless.default.svc.cluster.local:9092
+
     consumer:
       auto-offset-reset: earliest
       properties:
