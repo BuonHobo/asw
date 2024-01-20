@@ -11,11 +11,11 @@ fi
 ORDERID=$1 
 
 echo "# trova l'ordine $ORDERID" 
-echo $(curl -s localhost:8080/orderservice/orders/${ORDERID}) | json_pp
+echo $(curl -s localhost:8080/orderservice/orders/${ORDERID} -H "Host: ordermanager.asw.it") | json_pp
 echo 
 
 echo "# convalida l'ordine $ORDERID" 
-echo $(curl -s localhost:8080/ordervalidationservice/ordervalidations/${ORDERID}) | json_pp
+echo $(curl -s localhost:8080/ordervalidationservice/ordervalidations/${ORDERID} -H "Host: ordermanager.asw.it") | json_pp
 echo 
 
 
