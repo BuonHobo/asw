@@ -11,4 +11,5 @@ kubectl wait --namespace ingress-nginx \
   --selector=app.kubernetes.io/component=controller \
   --timeout=90s #This is just waiting for that "patch" to apply
 
+export PERSISTENCE_ENABLED=true
 source start-cluster.sh
