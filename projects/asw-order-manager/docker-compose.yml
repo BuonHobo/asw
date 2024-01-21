@@ -12,38 +12,38 @@ volumes:
     driver: local
 services:
   order-service:
-    image: ghcr.io/buonhobo/asw-order:2024-01-19-1653
-#    build:
-#      context: .
-#      args:
-#        JAR: order-service
-    depends_on: ["consul","kafka","order-service-db"]
+    image: ghcr.io/buonhobo/asw-order-service
+    build:
+      context: .
+      args:
+        JAR: order-service
+    depends_on: ["consul","kafka","order-service-db-postgresql"]
     deploy:
       replicas: 2
   product-service:
-    image: ghcr.io/buonhobo/asw-product:2024-01-19-1656
-#    build:
-#      context: .
-#      args:
-#        JAR: product-service
-    depends_on: ["consul","kafka","product-service-db"]
+    image: ghcr.io/buonhobo/asw-product-service
+    build:
+      context: .
+      args:
+        JAR: product-service
+    depends_on: ["consul","kafka","product-service-db-postgresql"]
     deploy:
       replicas: 2
   order-validation-service:
-    image: ghcr.io/buonhobo/asw-order-validation:2024-01-19-1645
-#    build:
-#      context: .
-#      args:
-#        JAR: order-validation-service
-    depends_on: ["consul","kafka","order-validation-service-db"]
+    image: ghcr.io/buonhobo/asw-order-validation-service
+    build:
+      context: .
+      args:
+        JAR: order-validation-service
+    depends_on: ["consul","kafka","order-validation-service-db-postgresql"]
     deploy:
       replicas: 2
   api-gateway:
-    image: ghcr.io/buonhobo/asw-api-gateway:2024-01-19-1657
-#    build:
-#      context: .
-#      args:
-#        JAR: api-gateway
+    image: ghcr.io/buonhobo/asw-api-gateway
+    build:
+      context: .
+      args:
+        JAR: api-gateway
     depends_on: ["consul","kafka"]
     ports:
       - "8080:8080"
@@ -76,7 +76,7 @@ services:
       - "8500:8500"
     volumes:
       - "consul-data:/consul/data"
-  order-service-db:
+  order-service-db-postgresql:
     image: postgres
     environment:
       - POSTGRES_PASSWORD=ordermanager
@@ -84,7 +84,7 @@ services:
       - "8081:5432"
     volumes:
       - "order-service-db-data:/var/lib/postgresql/data"
-  product-service-db:
+  product-service-db-postgresql:
     image: postgres
     environment:
       - POSTGRES_PASSWORD=ordermanager
@@ -92,7 +92,7 @@ services:
       - "8082:5432"
     volumes:
       - "product-service-db-data:/var/lib/postgresql/data"
-  order-validation-service-db:
+  order-validation-service-db-postgresql:
     image: postgres
     environment:
       - POSTGRES_PASSWORD=ordermanager

@@ -1,7 +1,8 @@
 #!/bin/bash
 
 if [ -z $HOST ]; then
-  HOST=localhost:8080
+  HOST=192.168.49.2
+#  HOST=localhost:8080
 fi
 
 source do-init-products.sh 
